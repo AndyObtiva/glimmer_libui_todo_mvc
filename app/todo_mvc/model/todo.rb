@@ -3,8 +3,14 @@ class TodoMvc
     class Todo
       attr_accessor :task, :completed
       
-      def initialize(task)
+      def initialize(task, todo_list: nil)
         @task = task
+        @todo_list = todo_list
+      end
+      
+      def completed=(value)
+        @completed = value
+        @todo_list&.recalculate_active_todos
       end
       
       def active

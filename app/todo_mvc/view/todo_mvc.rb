@@ -69,6 +69,18 @@ class TodoMvc
                 end
               }
             }
+            
+            horizontal_box {
+              stretchy false
+              
+              label {
+                stretchy false
+                
+                text <= [@todo_list, :active_todos,
+                          on_read: -> (todos) { "#{todos.count} item#{'s' if todos.size != 1} left" }
+                        ]
+              }
+            }
           }
         }
       }

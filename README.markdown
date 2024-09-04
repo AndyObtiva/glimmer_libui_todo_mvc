@@ -597,6 +597,192 @@ glimmer run
 
 ![step 6 toggle all todos completed](/screenshots/glimmer-libui-todo-mvc-step6-toggle-all-todos-completed.png)
 
+### Step 7 - Add Items Left Label
+
+Replace the content of `app/todo_mvc/view/todo_mvc.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo_list'
+
+class TodoMvc
+  module View
+    class TodoMvc
+      include Glimmer::LibUI::Application
+    
+      before_body do
+        @todo_list = Model::TodoList.new
+        ['Home Improvement', 'Shopping', 'Cleaning'].each do |task|
+          @todo_list.add_todo(task)
+        end
+      end
+  
+      body {
+        window {
+          title 'Todo MVC'
+          content_size 480, 480
+          margined true
+
+          vertical_box {
+            horizontal_box {
+              stretchy false
+              
+              entry {
+                text <=> [@todo_list.new_todo, :task]
+              }
+              button('Add') {
+                stretchy false
+                
+                on_clicked do
+                  @todo_list.add_todo
+                end
+              }
+            }
+            
+            horizontal_box {
+              stretchy false
+              
+              button('Toggle All') {
+                stretchy false
+                
+                on_clicked do
+                  @todo_list.toggle_completion_of_all_todos
+                end
+              }
+            }
+            
+            table {
+              checkbox_column('Completed') {
+                editable true
+              }
+              text_column('Task')
+              
+              cell_rows <=> [@todo_list, :todos]
+              selection <=> [@todo_list, :selection_index]
+            }
+            
+            horizontal_box {
+              stretchy false
+              
+              button('Delete') {
+                stretchy false
+                
+                enabled <= [@todo_list, :selection_index, on_read: -> (value) { !!value }]
+                
+                on_clicked do
+                  @todo_list.delete_todo
+                end
+              }
+            }
+            
+            horizontal_box {
+              stretchy false
+              
+              label {
+                stretchy false
+                
+                text <= [@todo_list, :active_todos,
+                          on_read: -> (todos) { "#{todos.count} item#{'s' if todos.size != 1} left" }
+                        ]
+              }
+            }
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Replace the content of `app/todo_mvc/model/todo.rb` with the following code:
+
+```ruby
+class TodoMvc
+  module Model
+    class Todo
+      attr_accessor :task, :completed
+      
+      def initialize(task, todo_list: nil)
+        @task = task
+        @todo_list = todo_list
+      end
+      
+      def completed=(value)
+        @completed = value
+        @todo_list&.recalculate_active_todos
+      end
+      
+      def active
+        !completed
+      end
+      
+      def mark_completed
+        self.completed = true
+      end
+      
+      def mark_active
+        self.completed = false
+      end
+    end
+  end
+end
+```
+
+Replace the content of `app/todo_mvc/model/todo_list.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo'
+
+class TodoMvc
+  module Model
+    class TodoList
+      attr_accessor :todos, :active_todos, :selection_index
+      
+      def initialize
+        @todos = []
+        @active_todos = []
+      end
+      
+      def add_todo(task = nil)
+        task ||= new_todo.task
+        todo = Todo.new(task, todo_list: self)
+        todos << todo
+        recalculate_active_todos
+        new_todo.task = ''
+      end
+      
+      def new_todo
+        @new_todo ||= Todo.new('')
+      end
+      
+      def delete_todo
+        @todos.delete_at(selection_index)
+        recalculate_active_todos
+      end
+      
+      def toggle_completion_of_all_todos
+        if @todos.any?(&:active)
+          @todos.select(&:active).each(&:mark_completed)
+        else
+          @todos.select(&:completed).each(&:mark_active)
+        end
+      end
+      
+      def recalculate_active_todos
+        self.active_todos = @todos.select(&:active)
+      end
+    end
+  end
+end
+```
+
+Run application by running terminal command:
+
+```
+glimmer run
+```
+
+![step 7 items left](/screenshots/glimmer-libui-todo-mvc-step7-items-left.png)
+
 Contributing to todo_mvc
 ------------------------------------------
 
