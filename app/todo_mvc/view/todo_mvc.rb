@@ -38,6 +38,21 @@ class TodoMvc
               text_column('Task')
               
               cell_rows <=> [@todo_list, :todos]
+              selection <=> [@todo_list, :selection_index]
+            }
+            
+            horizontal_box {
+              stretchy false
+              
+              button('Delete') {
+                stretchy false
+                
+                enabled <= [@todo_list, :selection_index, on_read: -> (value) { !!value }]
+                
+                on_clicked do
+                  @todo_list.delete_todo
+                end
+              }
             }
           }
         }

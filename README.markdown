@@ -232,6 +232,115 @@ glimmer run
 
 ![step 3 enter new todo](/screenshots/glimmer-libui-todo-mvc-step3-enter-new-todo.png)
 
+### Step 4 - Add Delete Todo Button
+
+Replace the content of `app/todo_mvc/view/todo_mvc.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo_list'
+
+class TodoMvc
+  module View
+    class TodoMvc
+      include Glimmer::LibUI::Application
+    
+      before_body do
+        @todo_list = Model::TodoList.new
+        ['Home Improvement', 'Shopping', 'Cleaning'].each do |task|
+          @todo_list.add_todo(task)
+        end
+      end
+  
+      body {
+        window {
+          title 'Todo MVC'
+          content_size 480, 480
+          margined true
+
+          vertical_box {
+            horizontal_box {
+              stretchy false
+              
+              entry {
+                text <=> [@todo_list.new_todo, :task]
+              }
+              button('Add') {
+                stretchy false
+                
+                on_clicked do
+                  @todo_list.add_todo
+                end
+              }
+            }
+            
+            table {
+              text_column('Task')
+              
+              cell_rows <=> [@todo_list, :todos]
+              selection <=> [@todo_list, :selection_index]
+            }
+            
+            horizontal_box {
+              stretchy false
+              
+              button('Delete') {
+                stretchy false
+                
+                enabled <= [@todo_list, :selection_index, on_read: -> (value) { !!value }]
+                
+                on_clicked do
+                  @todo_list.delete_todo
+                end
+              }
+            }
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Replace the content of `app/todo_mvc/model/todo_list.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo'
+
+class TodoMvc
+  module Model
+    class TodoList
+      attr_accessor :todos, :selection_index
+      
+      def initialize
+        @todos = []
+      end
+      
+      def add_todo(task = nil)
+        task ||= new_todo.task
+        todos << Todo.new(task)
+        new_todo.task = ''
+      end
+      
+      def new_todo
+        @new_todo ||= Todo.new('')
+      end
+      
+      def delete_todo
+        @todos.delete_at(selection_index)
+      end
+    end
+  end
+end
+```
+
+Run application by running terminal command:
+
+```
+glimmer run
+```
+
+![step 4 delete todo](/screenshots/glimmer-libui-todo-mvc-step4-delete-todo.png)
+
 Contributing to todo_mvc
 ------------------------------------------
 

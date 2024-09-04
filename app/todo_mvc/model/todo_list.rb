@@ -3,7 +3,7 @@ require 'todo_mvc/model/todo'
 class TodoMvc
   module Model
     class TodoList
-      attr_accessor :todos
+      attr_accessor :todos, :selection_index
       
       def initialize
         @todos = []
@@ -17,6 +17,10 @@ class TodoMvc
       
       def new_todo
         @new_todo ||= Todo.new('')
+      end
+      
+      def delete_todo
+        @todos.delete_at(selection_index)
       end
     end
   end
