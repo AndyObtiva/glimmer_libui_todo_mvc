@@ -22,5 +22,7 @@ Contributing to todo_mvc
 Copyright
 ---------
 
+[MIT](LICENSE.txt)
+
 Copyright (c) 2024 Andy Maleh. See
-LICENSE.txt for further details.
+[LICENSE.txt](LICENSE.txt) for further details.
