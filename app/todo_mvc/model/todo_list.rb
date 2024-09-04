@@ -9,8 +9,14 @@ class TodoMvc
         @todos = []
       end
       
-      def add_todo(task)
+      def add_todo(task = nil)
+        task ||= new_todo.task
         todos << Todo.new(task)
+        new_todo.task = ''
+      end
+      
+      def new_todo
+        @new_todo ||= Todo.new('')
       end
     end
   end

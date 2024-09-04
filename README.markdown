@@ -9,7 +9,7 @@ A Ruby desktop application developed with [Glimmer DSL for LibUI](https://github
 
 ### Step 1 - Scaffold Application
 
-Scaffold application by running:
+Scaffold application by running terminal command:
 
 ```
 glimmer "scaffold[todo_mvc]"
@@ -17,13 +17,13 @@ glimmer "scaffold[todo_mvc]"
 
 Application is scaffolded in `todo_mvc` directory.
 
-Enter application directory by running:
+Enter application directory by running terminal command:
 
 ```
 cd todo_mvc
 ```
 
-Run application by running:
+Run application by running terminal command:
 
 ```
 glimmer run
@@ -43,19 +43,19 @@ bin/todo_mvc
 
 ### Step 2 - Add Todos Table with Fake Data
 
-Delete `Greeting` Model by running:
+Delete `Greeting` Model by running terminal command:
 
 ```
 rm app/todo_mvc/model/greeting.rb
 ```
 
-Create `Todo` Model by running:
+Create `Todo` Model by running terminal command:
 
 ```
 touch app/todo_mvc/model/todo.rb
 ```
 
-Paste the following code inside `app/todo_mvc/model/todo.rb`:
+Add the following code inside `app/todo_mvc/model/todo.rb`:
 
 ```ruby
 class TodoMvc
@@ -71,13 +71,13 @@ class TodoMvc
 end
 ```
 
-Create `TodoList` Model by running:
+Create `TodoList` Model by running terminal command:
 
 ```
 touch app/todo_mvc/model/todo_list.rb
 ```
 
-Paste the following code inside `app/todo_mvc/model/todo_list.rb`:
+Add the following code inside `app/todo_mvc/model/todo_list.rb`:
 
 ```ruby
 require 'todo_mvc/model/todo'
@@ -99,7 +99,7 @@ class TodoMvc
 end
 ```
 
-Clear content of `app/todo_mvc/view/todo_mvc.rb` and paste the following code in its place:
+Replace the content of `app/todo_mvc/view/todo_mvc.rb` with the following code:
 
 ```ruby
 require 'todo_mvc/model/todo_list'
@@ -134,13 +134,103 @@ class TodoMvc
 end
 ```
 
-Run application by running:
+Run application by running terminal command:
 
 ```
 glimmer run
 ```
 
 ![step 2 todo table with fake data](/screenshots/glimmer-libui-todo-mvc-step2-todo-table-with-fake-data.png)
+
+### Step 3 - Add New Todo Entry
+
+Replace the content of `app/todo_mvc/view/todo_mvc.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo_list'
+
+class TodoMvc
+  module View
+    class TodoMvc
+      include Glimmer::LibUI::Application
+    
+      before_body do
+        @todo_list = Model::TodoList.new
+        ['Home Improvement', 'Shopping', 'Cleaning'].each do |task|
+          @todo_list.add_todo(task)
+        end
+      end
+  
+      body {
+        window {
+          title 'Todo MVC'
+          content_size 480, 480
+          margined true
+
+          vertical_box {
+            horizontal_box {
+              stretchy false
+              
+              entry {
+                text <=> [@todo_list.new_todo, :task]
+              }
+              button('Add') {
+                stretchy false
+                
+                on_clicked do
+                  @todo_list.add_todo
+                end
+              }
+            }
+            
+            table {
+              text_column('Task')
+              
+              cell_rows <=> [@todo_list, :todos]
+            }
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Replace the content of `app/todo_mvc/model/todo_list.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo'
+
+class TodoMvc
+  module Model
+    class TodoList
+      attr_accessor :todos
+      
+      def initialize
+        @todos = []
+      end
+      
+      def add_todo(task = nil)
+        task ||= new_todo.task
+        todos << Todo.new(task)
+        new_todo.task = ''
+      end
+      
+      def new_todo
+        @new_todo ||= Todo.new('')
+      end
+    end
+  end
+end
+```
+
+Run application by running terminal command:
+
+```
+glimmer run
+```
+
+![step 3 enter new todo](/screenshots/glimmer-libui-todo-mvc-step3-enter-new-todo.png)
 
 Contributing to todo_mvc
 ------------------------------------------

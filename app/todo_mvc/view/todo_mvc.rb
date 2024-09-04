@@ -17,11 +17,28 @@ class TodoMvc
           title 'Todo MVC'
           content_size 480, 480
           margined true
-          
-          table {
-            text_column('Task')
+
+          vertical_box {
+            horizontal_box {
+              stretchy false
+              
+              entry {
+                text <=> [@todo_list.new_todo, :task]
+              }
+              button('Add') {
+                stretchy false
+                
+                on_clicked do
+                  @todo_list.add_todo
+                end
+              }
+            }
             
-            cell_rows <=> [@todo_list, :todos]
+            table {
+              text_column('Task')
+              
+              cell_rows <=> [@todo_list, :todos]
+            }
           }
         }
       }
