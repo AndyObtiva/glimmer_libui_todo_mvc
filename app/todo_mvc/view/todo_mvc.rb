@@ -35,6 +35,9 @@ class TodoMvc
             }
             
             table {
+              checkbox_column('Completed') {
+                editable true
+              }
               text_column('Task')
               
               cell_rows <=> [@todo_list, :todos]
