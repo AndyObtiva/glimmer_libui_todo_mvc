@@ -41,6 +41,107 @@ bin/todo_mvc
 
 ![step 1 preferences](/screenshots/glimmer-libui-todo-mvc-step1-todo-mvc-preferences.png)
 
+### Step 2 - Add Todos Table with Fake Data
+
+Delete `Greeting` Model by running:
+
+```
+rm app/todo_mvc/model/greeting.rb
+```
+
+Create `Todo` Model by running:
+
+```
+touch app/todo_mvc/model/todo.rb
+```
+
+Paste the following code inside `app/todo_mvc/model/todo.rb`:
+
+```ruby
+class TodoMvc
+  module Model
+    class Todo
+      attr_accessor :task
+      
+      def initialize(task)
+        @task = task
+      end
+    end
+  end
+end
+```
+
+Create `TodoList` Model by running:
+
+```
+touch app/todo_mvc/model/todo_list.rb
+```
+
+Paste the following code inside `app/todo_mvc/model/todo_list.rb`:
+
+```ruby
+require 'todo_mvc/model/todo'
+
+class TodoMvc
+  module Model
+    class TodoList
+      attr_accessor :todos
+      
+      def initialize
+        @todos = []
+      end
+      
+      def add_todo(task)
+        todos << Todo.new(task)
+      end
+    end
+  end
+end
+```
+
+Clear content of `app/todo_mvc/view/todo_mvc.rb` and paste the following code in its place:
+
+```ruby
+require 'todo_mvc/model/todo_list'
+
+class TodoMvc
+  module View
+    class TodoMvc
+      include Glimmer::LibUI::Application
+    
+      before_body do
+        @todo_list = Model::TodoList.new
+        ['Home Improvement', 'Shopping', 'Cleaning'].each do |task|
+          @todo_list.add_todo(task)
+        end
+      end
+  
+      body {
+        window {
+          title 'Todo MVC'
+          content_size 480, 480
+          margined true
+          
+          table {
+            text_column('Task')
+            
+            cell_rows <=> [@todo_list, :todos]
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Run application by running:
+
+```
+glimmer run
+```
+
+![step 2 todo table with fake data](/screenshots/glimmer-libui-todo-mvc-step2-todo-table-with-fake-data.png)
+
 Contributing to todo_mvc
 ------------------------------------------
 
