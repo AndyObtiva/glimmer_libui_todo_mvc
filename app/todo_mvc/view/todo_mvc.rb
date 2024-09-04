@@ -52,7 +52,7 @@ class TodoMvc
               }
               text_column('Task')
               
-              cell_rows <=> [@todo_list, :todos]
+              cell_rows <=> [@todo_list, :displayed_todos]
               selection <=> [@todo_list, :selection_index]
             }
             
@@ -79,6 +79,36 @@ class TodoMvc
                 text <= [@todo_list, :active_todos,
                           on_read: -> (todos) { "#{todos.count} item#{'s' if todos.size != 1} left" }
                         ]
+              }
+              
+              button('All') {
+                stretchy false
+                
+                enabled <= [@todo_list, :filter, on_read: -> (value) { value != :all }]
+
+                on_clicked do
+                  @todo_list.filter = :all
+                end
+              }
+              
+              button('Active') {
+                stretchy false
+                
+                enabled <= [@todo_list, :filter, on_read: -> (value) { value != :active }]
+
+                on_clicked do
+                  @todo_list.filter = :active
+                end
+              }
+              
+              button('Completed') {
+                stretchy false
+                
+                enabled <= [@todo_list, :filter, on_read: -> (value) { value != :completed }]
+
+                on_clicked do
+                  @todo_list.filter = :completed
+                end
               }
             }
           }
