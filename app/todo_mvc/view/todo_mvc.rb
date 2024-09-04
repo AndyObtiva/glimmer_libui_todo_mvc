@@ -1,5 +1,11 @@
 require 'todo_mvc/model/todo_list'
 
+require 'todo_mvc/view/add_todo_form'
+require 'todo_mvc/view/toggle_all_bar'
+require 'todo_mvc/view/todo_table'
+require 'todo_mvc/view/delete_bar'
+require 'todo_mvc/view/filter_bar'
+
 class TodoMvc
   module View
     class TodoMvc
@@ -19,111 +25,22 @@ class TodoMvc
           margined true
 
           vertical_box {
-            horizontal_box {
+            add_todo_form(todo_list: @todo_list) {
               stretchy false
-              
-              entry {
-                text <=> [@todo_list.new_todo, :task]
-              }
-              button('Add') {
-                stretchy false
-                
-                on_clicked do
-                  @todo_list.add_todo
-                end
-              }
             }
             
-            horizontal_box {
+            toggle_all_bar(todo_list: @todo_list) {
               stretchy false
-              
-              button('Toggle All') {
-                stretchy false
-                
-                on_clicked do
-                  @todo_list.toggle_completion_of_all_todos
-                end
-              }
             }
             
-            table {
-              checkbox_column('Completed') {
-                editable true
-              }
-              text_column('Task')
-              
-              cell_rows <=> [@todo_list, :displayed_todos]
-              selection <=> [@todo_list, :selection_index]
+            todo_table(todo_list: @todo_list)
+            
+            delete_bar(todo_list: @todo_list) {
+              stretchy false
             }
             
-            horizontal_box {
+            filter_bar(todo_list: @todo_list) {
               stretchy false
-              
-              button('Delete') {
-                stretchy false
-                
-                enabled <= [@todo_list, :selection_index, on_read: -> (value) { !!value }]
-                
-                on_clicked do
-                  @todo_list.delete_todo
-                end
-              }
-            }
-            
-            horizontal_box {
-              stretchy false
-              
-              label {
-                stretchy false
-                
-                text <= [@todo_list, :active_todos,
-                          on_read: -> (todos) { "#{todos.count} item#{'s' if todos.size != 1} left" }
-                        ]
-              }
-              
-              label # filler
-              
-              button('All') {
-                stretchy false
-                
-                enabled <= [@todo_list, :filter, on_read: -> (value) { value != :all }]
-
-                on_clicked do
-                  @todo_list.filter = :all
-                end
-              }
-              
-              button('Active') {
-                stretchy false
-                
-                enabled <= [@todo_list, :filter, on_read: -> (value) { value != :active }]
-
-                on_clicked do
-                  @todo_list.filter = :active
-                end
-              }
-              
-              button('Completed') {
-                stretchy false
-                
-                enabled <= [@todo_list, :filter, on_read: -> (value) { value != :completed }]
-
-                on_clicked do
-                  @todo_list.filter = :completed
-                end
-              }
-              
-              label # filler
-              
-              button('Clear Completed') {
-                stretchy false
-                
-                enabled <= [@todo_list, :completed_todos, on_read: :any?]
-
-                on_clicked do
-                  @todo_list.clear_completed
-                end
-              }
             }
           }
         }

@@ -1248,6 +1248,282 @@ glimmer run
 
 ![step 9 clear completed button clicked](/screenshots/glimmer-libui-todo-mvc-step9-clear-completed-button-clicked.png)
 
+### Step 10 - Refactor To Components
+
+Replace the content of `app/todo_mvc/view/todo_mvc.rb` with the following code:
+
+```ruby
+require 'todo_mvc/model/todo_list'
+
+require 'todo_mvc/view/add_todo_form'
+require 'todo_mvc/view/toggle_all_bar'
+require 'todo_mvc/view/todo_table'
+require 'todo_mvc/view/delete_bar'
+require 'todo_mvc/view/filter_bar'
+
+class TodoMvc
+  module View
+    class TodoMvc
+      include Glimmer::LibUI::Application
+    
+      before_body do
+        @todo_list = Model::TodoList.new
+        ['Home Improvement', 'Shopping', 'Cleaning'].each do |task|
+          @todo_list.add_todo(task)
+        end
+      end
+  
+      body {
+        window {
+          title 'Todo MVC'
+          content_size 480, 480
+          margined true
+
+          vertical_box {
+            add_todo_form(todo_list: @todo_list) {
+              stretchy false
+            }
+            
+            toggle_all_bar(todo_list: @todo_list) {
+              stretchy false
+            }
+            
+            todo_table(todo_list: @todo_list)
+            
+            delete_bar(todo_list: @todo_list) {
+              stretchy false
+            }
+            
+            filter_bar(todo_list: @todo_list) {
+              stretchy false
+            }
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Create `app/todo_mvc/view/add_todo_form.rb` component by running:
+
+```
+glimmer "scaffold:customcontrol[add_todo_form]"
+```
+
+Replace the content of `app/todo_mvc/view/add_todo_form.rb` with the following code:
+
+```ruby
+class TodoMvc
+  module View
+    class AddTodoForm
+      include Glimmer::LibUI::CustomControl
+  
+      option :todo_list
+  
+      body {
+        horizontal_box {
+          entry {
+            text <=> [todo_list.new_todo, :task]
+          }
+          button('Add') {
+            stretchy false
+            
+            on_clicked do
+              todo_list.add_todo
+            end
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Create `app/todo_mvc/view/toggle_all_bar.rb` component by running:
+
+```
+glimmer "scaffold:customcontrol[toggle_all_bar]"
+```
+
+Replace the content of `app/todo_mvc/view/toggle_all_bar.rb` with the following code:
+
+```ruby
+class TodoMvc
+  module View
+    class ToggleAllBar
+      include Glimmer::LibUI::CustomControl
+  
+      option :todo_list
+      
+      body {
+        horizontal_box {
+          button('Toggle All') {
+            stretchy false
+            
+            on_clicked do
+              todo_list.toggle_completion_of_all_todos
+            end
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Create `app/todo_mvc/view/todo_table.rb` component by running:
+
+```
+glimmer "scaffold:customcontrol[todo_table]"
+```
+
+Replace the content of `app/todo_mvc/view/todo_table.rb` with the following code:
+
+```ruby
+class TodoMvc
+  module View
+    class ToggleAllBar
+      include Glimmer::LibUI::CustomControl
+  
+      option :todo_list
+      
+      body {
+        horizontal_box {
+          button('Toggle All') {
+            stretchy false
+            
+            on_clicked do
+              todo_list.toggle_completion_of_all_todos
+            end
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Create `app/todo_mvc/view/delete_bar.rb` component by running:
+
+```
+glimmer "scaffold:customcontrol[delete_bar]"
+```
+
+Replace the content of `app/todo_mvc/view/delete_bar.rb` with the following code:
+
+```ruby
+class TodoMvc
+  module View
+    class DeleteBar
+      include Glimmer::LibUI::CustomControl
+  
+      option :todo_list
+  
+      body {
+        horizontal_box {
+          button('Delete') {
+            stretchy false
+            
+            enabled <= [todo_list, :selection_index, on_read: -> (value) { !!value }]
+            
+            on_clicked do
+              todo_list.delete_todo
+            end
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Create `app/todo_mvc/view/filter_bar.rb` component by running:
+
+```
+glimmer "scaffold:customcontrol[filter_bar]"
+```
+
+Replace the content of `app/todo_mvc/view/filter_bar.rb` with the following code:
+
+```ruby
+class TodoMvc
+  module View
+    class FilterBar
+      include Glimmer::LibUI::CustomControl
+  
+      option :todo_list
+  
+      body {
+        horizontal_box {
+          stretchy false
+          
+          label {
+            stretchy false
+            
+            text <= [todo_list, :active_todos,
+                      on_read: -> (todos) { "#{todos.count} item#{'s' if todos.size != 1} left" }
+                    ]
+          }
+          
+          label # filler
+          
+          button('All') {
+            stretchy false
+            
+            enabled <= [todo_list, :filter, on_read: -> (value) { value != :all }]
+
+            on_clicked do
+              todo_list.filter = :all
+            end
+          }
+          
+          button('Active') {
+            stretchy false
+            
+            enabled <= [todo_list, :filter, on_read: -> (value) { value != :active }]
+
+            on_clicked do
+              todo_list.filter = :active
+            end
+          }
+          
+          button('Completed') {
+            stretchy false
+            
+            enabled <= [todo_list, :filter, on_read: -> (value) { value != :completed }]
+
+            on_clicked do
+              todo_list.filter = :completed
+            end
+          }
+          
+          label # filler
+          
+          button('Clear Completed') {
+            stretchy false
+            
+            enabled <= [todo_list, :completed_todos, on_read: :any?]
+
+            on_clicked do
+              todo_list.clear_completed
+            end
+          }
+        }
+      }
+    end
+  end
+end
+```
+
+Run application by running terminal command:
+
+```
+glimmer run
+```
+
+![step 9 clear completed button enabled](/screenshots/glimmer-libui-todo-mvc-step9-clear-completed-button-enabled.png)
+
 Contributing to todo_mvc
 ------------------------------------------
 
