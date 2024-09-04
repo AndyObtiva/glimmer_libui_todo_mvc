@@ -5,6 +5,21 @@ A Ruby desktop application developed with [Glimmer DSL for LibUI](https://github
 
 [Presentation Slides](https://bit.ly/3ThsI0H)
 
+## Table of Content
+
+- [Todo MVC Glimmer DSL for LibUI Desktop Edition](#todo-mvc-glimmer-dsl-for-libui-desktop-edition)
+  * [Steps](#steps)
+    + [Step 1 - Scaffold Application](#step-1---scaffold-application)
+    + [Step 2 - Add Todos Table with Fake Data](#step-2---add-todos-table-with-fake-data)
+    + [Step 3 - Add New Todo Entry](#step-3---add-new-todo-entry)
+    + [Step 4 - Add Delete Todo Button](#step-4---add-delete-todo-button)
+    + [Step 5 - Add Completed Table Column](#step-5---add-completed-table-column)
+    + [Step 6 - Add Toggle All Button](#step-6---add-toggle-all-button)
+    + [Step 7 - Add Items Left Label](#step-7---add-items-left-label)
+    + [Step 8 - Add All/Active/Completed Buttons](#step-8---add-allactivecompleted-buttons)
+    + [Step 9 - Add Clear Completed Button](#step-9---add-clear-completed-button)
+    + [Step 10 - Refactor To Components](#step-10---refactor-to-components)
+
 ## Steps
 
 ### Step 1 - Scaffold Application
@@ -1523,23 +1538,6 @@ glimmer run
 ```
 
 ![step 9 clear completed button enabled](/screenshots/glimmer-libui-todo-mvc-step9-clear-completed-button-enabled.png)
-
-Contributing to todo_mvc
-------------------------------------------
-
--   Check out the latest master to make sure the feature hasn't been
-    implemented or the bug hasn't been fixed yet.
--   Check out the issue tracker to make sure someone already hasn't
-    requested it and/or contributed it.
--   Fork the project.
--   Start a feature/bugfix branch.
--   Commit and push until you are happy with your contribution.
--   Make sure to add tests for it. This is important so I don't break it
-    in a future version unintentionally.
--   Please try not to mess with the Rakefile, version, or history. If
-    you want to have your own version, or is otherwise necessary, that
-    is fine, but please isolate to its own commit so I can cherry-pick
-    around it.
 
 Copyright
 ---------
