@@ -34,6 +34,18 @@ class TodoMvc
               }
             }
             
+            horizontal_box {
+              stretchy false
+              
+              button('Toggle All') {
+                stretchy false
+                
+                on_clicked do
+                  @todo_list.toggle_completion_of_all_todos
+                end
+              }
+            }
+            
             table {
               checkbox_column('Completed') {
                 editable true
