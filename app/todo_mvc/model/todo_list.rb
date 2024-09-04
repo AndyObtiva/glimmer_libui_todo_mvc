@@ -3,18 +3,21 @@ require 'todo_mvc/model/todo'
 class TodoMvc
   module Model
     class TodoList
-      attr_accessor :todos, :active_todos, :selection_index
+      attr_accessor :todos, :active_todos, :completed_todos, :displayed_todos, :selection_index, :filter
       
       def initialize
         @todos = []
         @active_todos = []
+        @completed_todos = []
+        @displayed_todos = @todos
+        @filter = :all
       end
       
       def add_todo(task = nil)
         task ||= new_todo.task
         todo = Todo.new(task, todo_list: self)
         todos << todo
-        recalculate_active_todos
+        recalculate_filtered_todos
         new_todo.task = ''
       end
       
@@ -24,7 +27,7 @@ class TodoMvc
       
       def delete_todo
         @todos.delete_at(selection_index)
-        recalculate_active_todos
+        recalculate_filtered_todos
       end
       
       def toggle_completion_of_all_todos
@@ -35,8 +38,26 @@ class TodoMvc
         end
       end
       
-      def recalculate_active_todos
+      def recalculate_filtered_todos
+        self.completed_todos = @todos.select(&:completed)
         self.active_todos = @todos.select(&:active)
+        recalculate_displayed_todos
+      end
+      
+      def filter=(filter_value)
+        @filter = filter_value
+        recalculate_displayed_todos
+      end
+      
+      def recalculate_displayed_todos
+        case filter
+        when :all
+          self.displayed_todos = todos
+        when :active
+          self.displayed_todos = active_todos
+        when :completed
+          self.displayed_todos = completed_todos
+        end
       end
     end
   end

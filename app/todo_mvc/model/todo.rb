@@ -10,7 +10,7 @@ class TodoMvc
       
       def completed=(value)
         @completed = value
-        @todo_list&.recalculate_active_todos
+        @todo_list&.recalculate_filtered_todos
       end
       
       def active
