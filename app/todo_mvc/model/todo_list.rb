@@ -59,6 +59,11 @@ class TodoMvc
           self.displayed_todos = completed_todos
         end
       end
+      
+      def clear_completed
+        @completed_todos.each { |todo| @todos.delete(todo) }
+        recalculate_filtered_todos
+      end
     end
   end
 end

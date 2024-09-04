@@ -81,6 +81,8 @@ class TodoMvc
                         ]
               }
               
+              label # filler
+              
               button('All') {
                 stretchy false
                 
@@ -108,6 +110,18 @@ class TodoMvc
 
                 on_clicked do
                   @todo_list.filter = :completed
+                end
+              }
+              
+              label # filler
+              
+              button('Clear Completed') {
+                stretchy false
+                
+                enabled <= [@todo_list, :completed_todos, on_read: :any?]
+
+                on_clicked do
+                  @todo_list.clear_completed
                 end
               }
             }
