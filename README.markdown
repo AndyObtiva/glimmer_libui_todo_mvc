@@ -428,7 +428,7 @@ class TodoMvc
 end
 ```
 
-Replace the content of `app/todo_mvc/model/todo_list.rb` with the following code:
+Replace the content of `app/todo_mvc/model/todo.rb` with the following code:
 
 ```ruby
 class TodoMvc
@@ -1398,20 +1398,20 @@ Replace the content of `app/todo_mvc/view/todo_table.rb` with the following code
 ```ruby
 class TodoMvc
   module View
-    class ToggleAllBar
+    class TodoTable
       include Glimmer::LibUI::CustomControl
   
       option :todo_list
-      
+
       body {
-        horizontal_box {
-          button('Toggle All') {
-            stretchy false
-            
-            on_clicked do
-              todo_list.toggle_completion_of_all_todos
-            end
+        table {
+          checkbox_column('Completed') {
+            editable true
           }
+          text_column('Task')
+          
+          cell_rows <=> [todo_list, :displayed_todos]
+          selection <=> [todo_list, :selection_index]
         }
       }
     end
