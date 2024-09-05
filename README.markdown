@@ -24,6 +24,18 @@ A Ruby desktop application developed with [Glimmer DSL for LibUI](https://github
 
 ### Step 1 - Scaffold Application
 
+Ensure your git [`user.name`](https://docs.github.com/en/get-started/getting-started-with-git/setting-your-username-in-git#setting-your-git-username-for-every-repository-on-your-computer) is configured.
+
+```
+git config --global user.name "FirstName LastName"
+```
+
+Ensure your git `github.user` is configured.
+
+```
+git config --global github.user githubusername
+```
+
 Scaffold application by running terminal command:
 
 ```
